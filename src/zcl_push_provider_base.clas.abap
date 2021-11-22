@@ -163,6 +163,15 @@ CLASS zcl_push_provider_base IMPLEMENTATION.
            FROM zpush_t003
            WHERE provider = iv_provider.
 
+    " El password esta cifrado por lo que hay que descifrarlo
+    TRY.
+
+        DATA(lo_encryp) = NEW zcl_ca_hard_wired_encryptor( ).
+        DATA(lv_descifrado) = lo_encryp->decrypt_string2string( the_string = CONV #( ms_provider_conf-connect_pass ) ).
+        ms_provider_conf-connect_pass = lv_descifrado.
+
+      CATCH cx_encrypt_error. " Error During Encryption or Decryption
+    ENDTRY.
 
   ENDMETHOD.
 
